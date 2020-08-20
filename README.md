@@ -17,7 +17,7 @@ Tanken er at man selv kan implementere den funktionalitet, man synes mangler på
   "token": "your_token_goes_here",
 }
 ```
-Vi holder production-bottens token hemmelig, så der ikke kommer til at køre flere instanser af botten på samme tid. Det betyder at I selv på lave en bot, som I kan køre lokalt og teste på.
+Vi holder production-bottens token hemmelig, så der ikke kommer til at køre flere instanser af botten på samme tid. Det betyder at I selv skal lave en bot, som I kan køre lokalt og teste på.
 
 ## Code style
 Code style bliver primært håndhævet af lintingværktøjet ESLint. Du skal dog være opmærksom på følgende:
