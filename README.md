@@ -21,5 +21,5 @@ Vi holder production-bottens token hemmelig, så der ikke kommer til at køre fl
 
 ## Code style
 Code style bliver primært håndhævet af lintingværktøjet ESLint. Du skal dog være opmærksom på følgende:
-* Filnavne og mappenavne angives med snake_case
+* Fil- og mappenavne angives med snake_case
 * Begræns brugen af globale variable (`global.bot` og `global.prefix` er godkendt)
