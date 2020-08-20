@@ -10,6 +10,12 @@ const Sudo = require(`./sudo/Sudo`);
 const { token } = JSON.parse(fs.readFileSync(`token.json`));
 const prefix = `;`;
 global.prefix = prefix;
+// Construct all models here for convenience later
+function constructModels(msg, argv) {
+  return {
+    sudo: new Sudo(msg, argv),
+  };
+}
 
 // Connect to the discord api
 global.bot.login(token);
@@ -29,25 +35,18 @@ global.bot.on(`message`, (msg) => {
     const allModels = constructModels(msg, argv);
     const modelName = Object.keys(allModels).find((model) => model === argv[0]); // Checks if argv[0] corresponds to any of the models.
     if (modelName) {
-      allModels[modelName].handle();
+      allModels[modelName].handle(); // Handles all requests to models in a uniform way
     }
     else {
       switch (argv[0]) {
         case `help`: case `h`: case `commands`:
-          sendHelpMsg(msg);                          break;
-        case `ping`: msg.reply(`Pong!`);             break; // FIXME: Should be removed in the future
-        default: sendErrorMsg(msg);                  break;
+          sendHelpMsg(msg);              break;
+        case `ping`: msg.reply(`Pong!`); break; // FIXME: Should be removed in the future
+        default: sendErrorMsg(msg);      break;
       }
     }
   }
 });
-
-// Construct all models here for convenience later
-function constructModels(msg, argv) {
-  return {
-    sudo: new Sudo(msg, argv),
-  };
-}
 
 function sendErrorMsg(msg) {
   msg.reply(`Invalid command. See ${prefix}help for a list of available commands.`);
