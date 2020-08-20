@@ -2,14 +2,14 @@
 const Discord = require(`discord.js`);
 global.bot    = new Discord.Client(); // Is saved in a global variable, so it's available throughout the modules
 const fs      = require(`fs`);
-// const path    = require(`path`);
+const path    = require(`path`);
+
+const Sudo = require(`./sudo/Sudo`);
 
 // Variables
 const { token } = JSON.parse(fs.readFileSync(`token.json`));
 const prefix = `;`;
 global.prefix = prefix;
-//                           Lasse                 Jacob                  Rasmus
-const moderatorIds = [`187542518659809280`, `246647153865392138`, `251059000668323840`]; // Discord IDs (msg.member.id)
 
 // Connect to the discord api
 global.bot.login(token);
@@ -22,18 +22,32 @@ global.bot.on(`ready`, () => {
 // Main method. When a message occurs in a chat this happens
 global.bot.on(`message`, (msg) => {
   if (msg.content[0] === prefix) {
-    msg.content = msg.content.substring(prefix.length); // Removes the prefix character
+    // Split the message into an array for easier access to components
     const argv = msg.content.split(` `).map((arg) => arg.toLowerCase());
+    argv[0] = argv[0].substring(prefix.length); // Removes the prefix character
 
-    switch (argv[0]) {
-      case `help`: case `h`: case `commands`:
-        sendHelpMsg(msg);              break;
-      case `ping`: msg.reply(`Pong!`); break; // FIXME: Should be removed in the future
-      case `sudo`: sudo(msg, argv);    break;
-      default: sendErrorMsg(msg);      break;
+    const allModels = constructModels(msg, argv);
+    const modelName = Object.keys(allModels).find((model) => model === argv[0]); // Checks if argv[0] corresponds to any of the models.
+    if (modelName) {
+      allModels[modelName].handle();
+    }
+    else {
+      switch (argv[0]) {
+        case `help`: case `h`: case `commands`:
+          sendHelpMsg(msg);                          break;
+        case `ping`: msg.reply(`Pong!`);             break; // FIXME: Should be removed in the future
+        default: sendErrorMsg(msg);                  break;
+      }
     }
   }
 });
+
+// Construct all models here for convenience later
+function constructModels(msg, argv) {
+  return {
+    sudo: new Sudo(msg, argv),
+  };
+}
 
 function sendErrorMsg(msg) {
   msg.reply(`Invalid command. See ${prefix}help for a list of available commands.`);
@@ -47,24 +61,6 @@ function sendHelpMsg(msg) {
     }
     msg.reply(data);
   });
-}
-
-// This function handles commands which are only available to the moderators of the server
-function sudo(msg, argv) {
-  if (isModerator(msg.member.id)) {
-    switch (argv[1]) {
-      case `ping`: msg.reply(`Glorified pong!`); break; // FIXME: Should be removed in the future
-      default: sendErrorMsg(msg);                break;
-    }
-  }
-  else {
-    msg.reply(`Unauthorized.`);
-  }
-}
-
-// Returns boolean. Returns true if the user is a moderator.
-function isModerator(userId) {
-  return undefined !== moderatorIds.find((modId) => modId === userId);
 }
 
 // https://www.reddit.com/r/discordapp/comments/8yfe5f/discordjs_bot_get_username_and_tag/
