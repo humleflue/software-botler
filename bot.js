@@ -2,9 +2,10 @@
 const Discord = require(`discord.js`);
 global.bot    = new Discord.Client(); // Is saved in a global variable, so it's available throughout the modules
 const fs      = require(`fs`);
-const path    = require(`path`);
+// const path    = require(`path`);
 
-const Sudo = require(`./sudo/Sudo`);
+// Models
+const Yep  = require(`./Models/YEP/Yep`);
 
 // Variables
 const { token } = JSON.parse(fs.readFileSync(`token.json`));
@@ -13,7 +14,8 @@ global.prefix = prefix;
 // Construct all models here for convenience later
 function constructModels(msg, argv) {
   return {
-    sudo: new Sudo(msg, argv),
+    // Put models here. Example:
+    // sudo: new Sudo(msg, argv),
   };
 }
 
@@ -29,12 +31,11 @@ global.bot.on(`ready`, () => {
 global.bot.on(`message`, (msg) => {
   if (msg.content[0] === prefix) {
     // Split the message into an array for easier access to components
-    const argv = msg.content.split(` `).map((arg) => arg.toLowerCase());
-    argv[0] = argv[0].substring(prefix.length); // Removes the prefix character
+    const argv = splitMsgContent(msg.content);
 
     const allModels = constructModels(msg, argv);
     const modelName = Object.keys(allModels).find((model) => model === argv[0]); // Checks if argv[0] corresponds to any of the models.
-    if (modelName) {
+    if (modelName !== undefined) {
       allModels[modelName].handle(); // Handles all requests to models in a uniform way
     }
     else {
@@ -46,7 +47,23 @@ global.bot.on(`message`, (msg) => {
       }
     }
   }
+  else {
+    const YEP = [`yep`, `Yep`, `YEP`];
+    // If msg.content contains YEP
+    if (YEP.some((yep) => msg.content.includes(yep))) {
+      const argv = splitMsgContent(msg);
+      const yep = new Yep(msg, argv);
+      yep.handle();
+    }
+  }
 });
+
+// Split the message into an array for easier access to components
+function splitMsgContent(msg) {
+  const argv = msg.content.split(` `).map((arg) => arg.toLowerCase());
+  argv[0] = argv[0].substring(prefix.length); // Removes the prefix character
+  return argv;
+}
 
 function sendErrorMsg(msg) {
   msg.reply(`Invalid command. See ${prefix}help for a list of available commands.`);
