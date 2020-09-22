@@ -1,0 +1,4 @@
+If you're experiencing a delay with the bot this is why:
+Secondary channels will rename themselves every few minutes according to your template if necessary (e.g. when members of the channel start playing a different game).
+
+**Note:** Discord has strict rate limiting in place that prevents channels from being renamed too often. At the time of writing this, it allows renaming only twice every 10 minutes. Because of this, your channel may not be renamed as often as you like, but just be patient, the bot will rename it eventually.

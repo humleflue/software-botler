@@ -1,0 +1,4 @@
+**Auto Voice Channels** allows you to dynamically create voice channels as you need them, and automatically delete them when they're empty.
+
+Simply join the "+ New Game Session" channel to create a new game session voice channel. The bot will automatically detect which game the participants are playing and display it as part of the voice channel's name.
+Gl&hf!
