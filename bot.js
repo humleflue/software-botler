@@ -73,7 +73,7 @@ global.bot.on(`guildMemberUpdate`, async (oldMember, newMember) => {
   console.log(`Premium since old/new: `, oldMember.premiumSince, newMember.premiumSince); // FIXME: Remove after testing
   if (oldMember.premiumSince !== newMember.premiumSince) {
     const generalTextChannelID = 616659963594670091;
-    newMember.guild.channels.get(generalTextChannelID).send(`<@${newMember.id}> just boosted the server!\n`);
+    global.bot.channels.get(generalTextChannelID).send(`<@${newMember.id}> just boosted the server!\n`);
   }
 });
 
