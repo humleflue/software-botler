@@ -70,7 +70,6 @@ global.bot.on(`message`, (msg) => {
 
 // Posts announcement in #general when a user boosts the server
 global.bot.on(`guildMemberUpdate`, async (oldMember, newMember) => {
-  console.log(`Premium since old/new: `, oldMember.premiumSince, newMember.premiumSince); // FIXME: Remove after testing
   if (oldMember.premiumSince.toString() !== newMember.premiumSince.toString()) {
     const generalTextChannelID = `616659963594670091`;
     global.bot.channels.cache.get(generalTextChannelID).send(`<@${newMember.id}> just boosted the server!\n`);
