@@ -7,11 +7,13 @@ const fs      = require(`fs`);
 // Models
 const Yep               = require(`./Models/MsgContains/YEP/Yep`);
 const AutoVoiceChannels = require(`./Models/Commands/AutoVoiceChannels/AutoVoiceChannels`);
+const BirthdayBot       = require(`./Models/MsgSentBy/BirthdayBot`);
 
 // Variables
 const { token } = JSON.parse(fs.readFileSync(`token.json`));
 const prefix = `;`;
 global.prefix = prefix;
+
 // Construct all models here for convenience later
 function constructModels(msg, argv) {
   return {
@@ -20,6 +22,9 @@ function constructModels(msg, argv) {
     },
     msgContains: {
       yep: new Yep(msg, argv),
+    },
+    msgSendBy: {
+      "470673087671566366": new BirthdayBot(msg, argv),
     },
   };
 }
@@ -36,9 +41,10 @@ global.bot.on(`ready`, () => {
 global.bot.on(`message`, (msg) => {
   // Split the message into an array for easier access to components
   const argv = splitMsgContent(msg.content);
+  const models = constructModels(msg, argv);
 
   if (msg.content[0] === prefix) {
-    const commandRelatedModels = constructModels(msg, argv).commands;
+    const commandRelatedModels = models.commands;
     // Provides easy access to the following functions through the msg-object
     msg.sendInvalidCommandReply = sendInvalidCommandReply;
     msg.sendHelpReply = sendHelpReply;
@@ -57,7 +63,7 @@ global.bot.on(`message`, (msg) => {
     }
   }
   else if (msg.author.bot === false) {
-    const msgContainsRelatedModels = constructModels(msg, argv).msgContains;
+    const msgContainsRelatedModels = models.msgContains;
 
     const stringsToContain = Object.keys(msgContainsRelatedModels);
     const stringsWhichAreContained = msgContains(stringsToContain, msg);
@@ -65,6 +71,13 @@ global.bot.on(`message`, (msg) => {
       const modelName = string;
       msgContainsRelatedModels[modelName].handle();
     });
+  }
+
+  // Check if message was sent by a user in the MsgSendBy models
+  const msgSendByRelatedModels = models.msgSendBy;
+  const modelName = Object.keys(msgSendByRelatedModels).find((model) => model === msg.author.id);
+  if (modelName !== undefined) {
+    msgSendByRelatedModels[modelName].handle();
   }
 });
 
