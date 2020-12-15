@@ -1,17 +1,18 @@
 const Model = require(`../AbstractModels/Model`);
 
+const generalTextChannelID = `616659963594670091`;
+
 class BirthdayBot extends Model {
   handle() {
-    this.msg.react(`🎉`);
-    this.msg.react(`🎂`);
-    this.msg.react(`🥳`);
-    this.msg.react(`🍰`);
-    this.msg.react(`🎈`);
-    this.msg.react(`🎁`);
-    this.msg.react(`🧁`);
-    this.msg.react(`🙌`);
-    this.msg.react(`🎊`);
-    this.msg.react(`💐`);
+    if (this.msg.channel.id === generalTextChannelID) {
+      this.msg.react(`🎉`);
+      this.msg.react(`🎂`);
+      this.msg.react(`🥳`);
+      this.msg.react(`🍰`);
+      this.msg.react(`🎈`);
+      this.msg.react(`🎁`);
+      this.msg.react(`🎊`);
+    }
   }
 }
 
